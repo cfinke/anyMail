@@ -9,7 +9,7 @@ if (isset($_REQUEST["manual_registration"])){
 	if ($_REQUEST["protocol"] == "/pop3") $port = 110;
 	else $port = 143;
 	
-	$mailbox = @imap_open('{'.gethostbyname($_REQUEST["host_name"]).':'.$port.$_REQUEST["protocol"].'}INBOX', $_REQUEST["username"], $_REQUEST["password"]);
+	$mailbox = @imap_open('{'.$_REQUEST["host_name"].':'.$port.$_REQUEST["protocol"].'}INBOX', $_REQUEST["username"], $_REQUEST["password"]);
 	
 	imap_errors();
 	
