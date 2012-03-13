@@ -7,9 +7,9 @@ foreach($_REQUEST as $key => $val) $_REQUEST[$key] = stripslashes($val);
 $mids = explode(",", $_REQUEST["mids"]);
 print_r($mids);
 foreach ($mids as $mid){
-	$query = "SELECT `labels`,`message_id` FROM `anymail_messages` WHERE `message_id` = '".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT `labels`,`message_id` FROM `anymail_messages` WHERE `message_id` = '".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$labels = unserialize($row["labels"]);
 	
@@ -24,8 +24,8 @@ foreach ($mids as $mid){
 		$labels[] = $_REQUEST["lid"];
 	}
 	
-	$query = "UPDATE `anymail_messages` SET `labels` = '".mysql_escape_string(serialize($labels))."' WHERE `message_id`='".$row["message_id"]."'";
-	run_query($query);
+	$query = "UPDATE `anymail_messages` SET `labels` = '".db_escape(serialize($labels))."' WHERE `message_id`='".db_escape($row["message_id"])."'";
+	db_query($query);
 }
 
 ?>

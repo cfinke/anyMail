@@ -17,12 +17,12 @@ $output .= '
 							<td># Messages</td>
 						</tr>';
 
-$query = "SELECT * FROM `anymail_labels` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `label_name` ASC";
-$result = run_query($query);
+$query = "SELECT * FROM `anymail_labels` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `label_name` ASC";
+$result = db_query($query);
 
 $i = 0;
 
-while ($row = mysql_fetch_array($result)){
+while ($row = db_fetch_assoc($result)){
 	$output .= '
 		<tr class="label_row_'.(($i++ % 2) + 1).'">
 			<td>
@@ -32,8 +32,8 @@ while ($row = mysql_fetch_array($result)){
 			<td>'.$row["label_name"].'</td>
 			<td>';
 	
-	$new_query = "SELECT COUNT(*) AS `num_messages` FROM `anymail_messages` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' AND `labels` LIKE '%\"".$row["label_id"]."\"%'";
-	$new_result = run_query($new_query);
+	$new_query = "SELECT COUNT(*) AS `num_messages` FROM `anymail_messages` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' AND `labels` LIKE '%\"".$row["label_id"]."\"%'";
+	$new_result = db_query($new_query);
 	$output .= mysql_result($new_result, 0, 'num_messages').'</td></tr>';
 }
 

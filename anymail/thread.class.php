@@ -19,9 +19,9 @@ class email_thread {
 		$this->id = $id;
 		
 		// Get the data for this message.
-		$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `message_id`='".$this->id."'";
-		$result = run_query($query);
-		$row = mysql_fetch_assoc($result);
+		$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `message_id`='".db_escape($this->id)."'";
+		$result = db_query($query);
+		$row = db_fetch_assoc($result);
 		
 		// Find the parent of this message.
 		$this->parent_message = $this->find_parent($row["In-Reply-To"]);
@@ -34,17 +34,17 @@ class email_thread {
 		}
 		else{
 			// The parent message was found, and it is different than the current message.
-			$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `Message-ID` = '".$this->parent_message."'";
-			$result = run_query($query);
+			$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `Message-ID` = '".db_escape($this->parent_message)."'";
+			$result = db_query($query);
 			
-			if (mysql_num_rows($result) == 0){
+			if (db_num_rows($result) == 0){
 				// The parent message is not in the local database.
 				// Set the current message as the acting parent.
 				$this->parent_message = $row["Message-ID"];
 				$row["selected"] = true;
 			}
 			else{
-				$row = mysql_fetch_assoc($result);
+				$row = db_fetch_assoc($result);
 			}
 		}
 		
@@ -75,9 +75,9 @@ class email_thread {
 	function find_parent($in_reply_to){
 		// This function finds the parent message of a thread.
 		
-		$query = "SELECT `Message-ID`,`In-Reply-To` FROM `anymail_messages` WHERE `Message-ID`='".$in_reply_to."' AND `Message-ID` != '' GROUP BY `Message-ID` LIMIT 1";
-		$result = run_query($query);
-		$row = mysql_fetch_assoc($result);
+		$query = "SELECT `Message-ID`,`In-Reply-To` FROM `anymail_messages` WHERE `Message-ID`='".db_escape($in_reply_to)."' AND `Message-ID` != '' GROUP BY `Message-ID` LIMIT 1";
+		$result = db_query($query);
+		$row = db_fetch_assoc($result);
 		
 		if ($row["In-Reply-To"] == ''){
 			return $in_reply_to;
@@ -94,11 +94,11 @@ class email_thread {
 		
 		$messages = array();
 		
-		$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `In-Reply-To`='".$message_id."' AND `In-Reply-To` != '' GROUP BY `Message-ID` ORDER BY `nice_date` ASC";
-		$result = run_query($query);
+		$query = "SELECT  *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE `In-Reply-To`='".db_escape($message_id)."' AND `In-Reply-To` != '' GROUP BY `Message-ID` ORDER BY `nice_date` ASC";
+		$result = db_query($query);
 		$generation++;
 		
-		while ($row = mysql_fetch_assoc($result)){
+		while ($row = db_fetch_assoc($result)){
 			$this->num_messages++;
 			$row["thread_id"] = "node".$this->node_id++;
 			$row["generation"] = $generation;

@@ -48,15 +48,15 @@ switch ($_SESSION["anymail"]["alid"]){
 		break;
 	case 'last7-unreplied':
 		$query = "SELECT `message_id`,`Message-ID` FROM `anymail_messages` WHERE UNIX_TIMESTAMP(`nice_date`) > ".(time() - (7 * 24 * 60 * 60));
-		$result = run_query($query);
+		$result = db_query($query);
 		
 		$mids = array();
 		
-		while ($row = mysql_fetch_array($result)){
-			$query = "SELECT `message_id` FROM `anymail_messages` WHERE `In-Reply-To`='".$row["Message-ID"]."' AND `deleted` = 0 AND `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' AND `sent` = 1";
-			$new_result = run_query($query);
+		while ($row = db_fetch_assoc($result)){
+			$query = "SELECT `message_id` FROM `anymail_messages` WHERE `In-Reply-To`='".db_escape($row["Message-ID"])."' AND `deleted` = 0 AND `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' AND `sent` = 1";
+			$new_result = db_query($query);
 			
-			if (mysql_num_rows($new_result) == 0){
+			if (db_num_rows($new_result) == 0){
 				$mids[] = $row["message_id"];
 			}
 		}
@@ -72,14 +72,14 @@ switch ($_SESSION["anymail"]["alid"]){
 	case 'contacts':
 		$contacts = array();
 		
-		$query = "SELECT `contact_email` FROM `anymail_contacts` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' GROUP BY `contact_email`";
-		$result = run_query($query);
+		$query = "SELECT `contact_email` FROM `anymail_contacts` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' GROUP BY `contact_email`";
+		$result = db_query($query);
 		
-		if (mysql_num_rows($result) > 0){
+		if (db_num_rows($result) > 0){
 			$where_clause = " AND (";
 			
-			while ($row = mysql_fetch_assoc($result)){
-				$where_clause .= " `From` LIKE '%".mysql_escape_string($row["contact_email"])."%' OR ";
+			while ($row = db_fetch_assoc($result)){
+				$where_clause .= " `From` LIKE '%".db_escape($row["contact_email"])."%' OR ";
 			}
 			
 			$where_clause = substr($where_clause, 0, strlen($where_clause) - 3) . ")";
@@ -90,14 +90,14 @@ switch ($_SESSION["anymail"]["alid"]){
 		
 		break;
 	case 'prev-contacts':
-		$query = "SELECT `From`, COUNT(`From`) AS `num_contacts` FROM `anymail_messages` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' GROUP BY `From`";
-		$result = run_query($query);
+		$query = "SELECT `From`, COUNT(`From`) AS `num_contacts` FROM `anymail_messages` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' GROUP BY `From`";
+		$result = db_query($query);
 		
 		$froms = array();
 		
-		while($row = mysql_fetch_assoc($result)){
+		while($row = db_fetch_assoc($result)){
 			if ($row["num_contacts"] > 1){
-				$froms[] = mysql_escape_string($row["From"]);
+				$froms[] = db_escape($row["From"]);
 			}
 		}
 		
@@ -110,12 +110,12 @@ switch ($_SESSION["anymail"]["alid"]){
 		
 		break;
 	case 'first-time':
-		$query = "SELECT `message_id`, COUNT(`From`) AS `num_contacts` FROM `anymail_messages` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' GROUP BY `From`";
-		$result = run_query($query);
+		$query = "SELECT `message_id`, COUNT(`From`) AS `num_contacts` FROM `anymail_messages` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' GROUP BY `From`";
+		$result = db_query($query);
 		
 		$mids = array();
 		
-		while($row = mysql_fetch_assoc($result)){
+		while($row = db_fetch_assoc($result)){
 			if ($row["num_contacts"] == 1){
 				$mids[] = $row["message_id"];
 			}
@@ -136,7 +136,7 @@ switch ($_SESSION["anymail"]["alid"]){
 
 if ($_SESSION["anymail"]["lid"] !== ''){
 	if ($_SESSION["anymail"]["lid"] == 'x'){
-		$where_clause .= " AND `labels` LIKE '".mysql_escape_string(serialize(array()))."' ";
+		$where_clause .= " AND `labels` LIKE '".db_escape(serialize(array()))."' ";
 	}
 	else{
 		$where_clause .= " AND `labels` LIKE '%\"".$_SESSION["anymail"]["lid"]."\"%' ";
@@ -159,20 +159,20 @@ if ($_SESSION["anymail"]["lid"] == ''){
 	$where_clause .= " AND `archived`=0 ";
 }
 
-$query = "SELECT *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE 1 ".$where_clause." AND `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `".$_SESSION["anymail"]["sortby"]."` ".$_SESSION["anymail"]["sortdir"]." LIMIT 100";
-$result = run_query($query);
+$query = "SELECT *, UNIX_TIMESTAMP(`nice_date`) AS `unix_time` FROM `anymail_messages` WHERE 1 ".$where_clause." AND `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `".$_SESSION["anymail"]["sortby"]."` ".$_SESSION["anymail"]["sortdir"]." LIMIT 100";
+$result = db_query($query);
 
 $old_rows = '';
 
 $output = '<table cellspacing="0" cellpadding="2">';
 
-if (mysql_num_rows($result) > 0){
+if (db_num_rows($result) > 0){
 	$all_labels = array();
 	
-	$labelquery = "SELECT * FROM `anymail_labels` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `label_name`";
-	$labelresult = run_query($labelquery);
+	$labelquery = "SELECT * FROM `anymail_labels` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `label_name`";
+	$labelresult = db_query($labelquery);
 	
-	while ($labelrow = mysql_fetch_assoc($labelresult)) $all_labels[$labelrow["label_id"]] = $labelrow["label_name"];
+	while ($labelrow = db_fetch_assoc($labelresult)) $all_labels[$labelrow["label_id"]] = $labelrow["label_name"];
 	
 	$output .= '
 			<tr class="listing_header">
@@ -185,7 +185,7 @@ if (mysql_num_rows($result) > 0){
 			</tr>';
 	
 	if ($_SESSION["anymail"]["sortby"] == "nice_date"){
-		while($row = mysql_fetch_array($result)){
+		while($row = db_fetch_assoc($result)){
 			$labels = array();
 			
 			$row["attachments"] = unserialize($row["attachments"]);
@@ -256,7 +256,7 @@ if (mysql_num_rows($result) > 0){
 	else{
 		$current_letter = '';
 		
-		while($row = mysql_fetch_array($result)){
+		while($row = db_fetch_assoc($result)){
 			$labels = array();
 			
 			$row["attachments"] = unserialize($row["attachments"]);

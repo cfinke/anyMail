@@ -80,34 +80,34 @@ function write_message_to_database($mobj, $sent = false){
 			$hash = md5($part["data"]);
 			
 			// Check if the data for this attachment is already stored in the database.
-			$dupe_query = "SELECT * FROM `anymail_attachments` WHERE `hash`='".$hash."' AND `mime_type`='".$part["type"]."/".$part["subtype"]."'";
-			$dupe_result = mysql_query($dupe_query) or die(mysql_error() . '<br /><br />' . $dupe_query);
+			$dupe_query = "SELECT * FROM `anymail_attachments` WHERE `hash`='".db_escape($hash)."' AND `mime_type`='".db_escape($part["type"]."/".$part["subtype"])."'";
+			$dupe_result = db_query($dupe_query);
 			
 			// If it is, only create a reference to the data.
-			if (mysql_num_rows($dupe_result) > 0){
+			if (db_num_rows($dupe_result) > 0){
 				$mysql_data_id = mysql_result($dupe_result, 0, 'data_id');
 				$insert_query = "INSERT INTO `anymail_attachments` 
 							(`user_id`,`filename`,`mime_type`,`encoding`,`hash`,`data_id`) 
 							VALUES
-							('".$_SESSION["anymail"]["user"]["user_id"]."',
-							 '".mysql_escape_string($part["filename"])."',
-							 '".mysql_escape_string($part["type"] .'/' . $part["subtype"])."',
-							 '".mysql_escape_string($part["encoding"])."',
-							 '".mysql_escape_string($hash)."',
-							 '".$mysql_data_id."')";
-				$insert_result = mysql_query($insert_query) or die(mysql_error() . '<br /><br />' . $insert_query);
+							('".intval($_SESSION["anymail"]["user"]["user_id"])."',
+							 '".db_escape($part["filename"])."',
+							 '".db_escape($part["type"] .'/' . $part["subtype"])."',
+							 '".db_escape($part["encoding"])."',
+							 '".db_escape($hash)."',
+							 '".intval($mysql_data_id)."')";
+				$insert_result = db_query($insert_query);
 				
 				// Add this attachment to the attachments for the message.
-				$attachments[] = mysql_insert_id();
+				$attachments[] = db_insert_id();
 			}
 			else{
 				// If the data is not in the database, add it, and then add a reference to it.
 				
 				// Find the biggest data_id.
 				$id_query = "SELECT MAX(`data_id`) as `new_id` FROM `anymail_attachments`";
-				$id_result = mysql_query($id_query) or die(mysql_error() . '<br /><br />' . $id_query);
+				$id_result = db_query($id_query);
 				
-				if (mysql_num_rows($id_result) == 0){
+				if (db_num_rows($id_result) == 0){
 					$mysql_data_id = 1;
 				}
 				else{
@@ -129,10 +129,10 @@ function write_message_to_database($mobj, $sent = false){
 						$data_insert = "INSERT INTO `anymail_attachment_data`
 									(`data_id`,`part_id`,`data`)
 									VALUES 
-									('".$mysql_data_id."',
+									('".intval($mysql_data_id)."',
 									 ".$part_id++.",
-									 '".mysql_escape_string($bodypart)."')";
-						$insert_result = mysql_query($data_insert) or die(mysql_error() . '<br /><br />' . $data_insert);
+									 '".db_escape($bodypart)."')";
+						$insert_result = db_query($data_insert);
 					}
 					
 					$bookmark += 100000;
@@ -142,16 +142,16 @@ function write_message_to_database($mobj, $sent = false){
 				$insert_query = "INSERT INTO `anymail_attachments` 
 							(`user_id`,`filename`,`mime_type`,`encoding`,`hash`,`data_id`) 
 							VALUES
-							('".$_SESSION["anymail"]["user"]["user_id"]."',
-							 '".mysql_escape_string($part["filename"])."',
-							 '".mysql_escape_string($part["type"] .'/'.$part["subtype"])."',
-							 '".mysql_escape_string($part["encoding"])."',
-							 '".mysql_escape_string($hash)."',
-							 '".$mysql_data_id."')";
-				$insert_result = mysql_query($insert_query) or die(mysql_error() . '<br /><br />' . $insert_query);
+							('".intval($_SESSION["anymail"]["user"]["user_id"])."',
+							 '".db_escape($part["filename"])."',
+							 '".db_escape($part["type"] .'/'.$part["subtype"])."',
+							 '".db_escape($part["encoding"])."',
+							 '".db_escape($hash)."',
+							 '".intval($mysql_data_id)."')";
+				$insert_result = db_query($insert_query);
 				
 				// Add the attachment to the attachments for this message.
-				$attachments[] = mysql_insert_id();
+				$attachments[] = db_insert_id();
 			}
 		}
 		
@@ -177,24 +177,24 @@ function write_message_to_database($mobj, $sent = false){
 			`html_part`,
 			`sent`)
 			VALUES (
-			'".$_SESSION["anymail"]["user"]["user_id"]."',
-			'".mysql_escape_string($mobj->headers)."', 
-			'".mysql_escape_string(serialize($attachments))."', 
-			'".mysql_escape_string($mobj->parsed_headers["Return-Path"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["From"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["Reply-To"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["To"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["Subject"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["Cc"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["Message-ID"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["In-Reply-To"])."', 
-			'".mysql_escape_string($mobj->parsed_headers["Date"])."', 
+			'".intval($_SESSION["anymail"]["user"]["user_id"])."',
+			'".db_escape($mobj->headers)."', 
+			'".db_escape(serialize($attachments))."', 
+			'".db_escape($mobj->parsed_headers["Return-Path"])."', 
+			'".db_escape($mobj->parsed_headers["From"])."', 
+			'".db_escape($mobj->parsed_headers["Reply-To"])."', 
+			'".db_escape($mobj->parsed_headers["To"])."', 
+			'".db_escape($mobj->parsed_headers["Subject"])."', 
+			'".db_escape($mobj->parsed_headers["Cc"])."', 
+			'".db_escape($mobj->parsed_headers["Message-ID"])."', 
+			'".db_escape($mobj->parsed_headers["In-Reply-To"])."', 
+			'".db_escape($mobj->parsed_headers["Date"])."', 
 			'".make_timestamp_from_date($mobj->parsed_headers["Date"])."', 
-			'".mysql_escape_string(serialize(array()))."', 
-			'".mysql_escape_string(substr($text_part,0,40000))."',
-			'".mysql_escape_string(substr($html_part,0,40000))."',
+			'".db_escape(serialize(array()))."', 
+			'".db_escape(substr($text_part,0,40000))."',
+			'".db_escape(substr($html_part,0,40000))."',
 			'".intval($sent)."')";
-		$message_result = mysql_query($message_query) or die(mysql_error() . '<br /><br />' . $message_query);
+		$message_result = db_query($message_query);
 	}
 	
 	return;
@@ -356,13 +356,6 @@ function make_timestamp_from_date($date){
 	return $timestamp;
 }
 
-function run_query($query){
-	// This function executes a MySQL query. Good for having uniform error messages, etc.
-	$result = mysql_query($query) or die(mysql_error() . '<br /><br />'. $query);
-	
-	return $result;
-}
-
 function explodei($separator, $string, $limit = false ){
 	// This function is a case-insensitive version of explode and was found on the
 	// php.net site.
@@ -420,8 +413,8 @@ function delete_message($mid){
 	// This function deletes a message and its attachments from the database.
 	
 	// Check if the message had any attachments.
-	$query = "SELECT `attachments` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
+	$query = "SELECT `attachments` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
 	$attachments = unserialize(mysql_result($result, 0, "attachments"));
 	
 	if (count($attachments) > 0){
@@ -430,46 +423,46 @@ function delete_message($mid){
 		
 		foreach ($attachments as $aid){
 			// Find out if more than one message references this attachment.
-			$query = "SELECT `data_id` FROM `anymail_attachments` WHERE `attachment_id` = '".$aid."'";
-			$result = run_query($query);
+			$query = "SELECT `data_id` FROM `anymail_attachments` WHERE `attachment_id` = '".intval($aid)."'";
+			$result = db_query($query);
 			$data_id = mysql_result($result, 0, 'data_id');
 			
 			// Delete the reference to the data.
-			$query = "DELETE FROM `anymail_attachments` WHERE `attachment_id` = '".$aid."'";
-			$result = run_query($query);
+			$query = "DELETE FROM `anymail_attachments` WHERE `attachment_id` = '".intval($aid)."'";
+			$result = db_query($query);
 			
-			$query = "SELECT * FROM `anymail_attachments` WHERE `data_id` = '".$data_id."' LIMIT 1";
-			$result = run_query($query);
+			$query = "SELECT * FROM `anymail_attachments` WHERE `data_id` = '".intval($data_id)."' LIMIT 1";
+			$result = db_query($query);
 			
-			if (mysql_num_rows($result) == 0){
+			if (db_num_rows($result) == 0){
 				// Delete the data if it was only referenced from one place.
-				$query = "DELETE FROM `anymail_attachment_data` WHERE `data_id`='".$data_id."'";
-				$result = run_query($query);
+				$query = "DELETE FROM `anymail_attachment_data` WHERE `data_id`='".intval($data_id)."'";
+				$result = db_query($query);
 			}
 		}
 	}
 	
 	// Delete the main message record.
-	$query = "DELETE FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
+	$query = "DELETE FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
 	
 	return;
 }
 
 function trash_message($mid){
 	// This function moves a message to the "trash."
-	$query = "UPDATE `anymail_messages` SET `deleted`='1' WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
+	$query = "UPDATE `anymail_messages` SET `deleted`='1' WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
 	
 	return;
 }
 
 function empty_trash(){
 	// This function permanently deletes all messages in the "trash."
-	$query = "SELECT `message_id` FROM `anymail_messages` WHERE `deleted`=1 AND `user_id` = '".$_SESSION["anymail"]["user"]["user_id"]."'";
-	$result = run_query($query);
+	$query = "SELECT `message_id` FROM `anymail_messages` WHERE `deleted`=1 AND `user_id` = '".intval($_SESSION["anymail"]["user"]["user_id"])."'";
+	$result = db_query($query);
 	
-	while ($row = mysql_fetch_assoc($result)){
+	while ($row = db_fetch_assoc($result)){
 		delete_message($row["message_id"]);
 	}
 	
@@ -544,10 +537,10 @@ function get_header_row(){
 								<option value="emptytrash" onclick="empty_trash();">Empty Trash</option>
 								<optgroup label="Label Checked Messages:">';
 
-	$query = "SELECT * FROM `anymail_labels` WHERE `user_id` = '".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `label_name`";
-	$result = run_query($query);
+	$query = "SELECT * FROM `anymail_labels` WHERE `user_id` = '".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `label_name`";
+	$result = db_query($query);
 	
-	while ($label_row = mysql_fetch_assoc($result)){
+	while ($label_row = db_fetch_assoc($result)){
 		$output .= '<option value="'.$label_row["label_id"].'" onclick="label_messages(getSelectedCheckboxValue(document.forms[0].input_row),'.$label_row["label_id"].', \''.str_replace("'","\'",$label_row["label_name"]).'\');">'.$label_row["label_name"].'</option>';
 	}
 
@@ -590,9 +583,9 @@ function get_nice_sender($from){
 }
 
 function get_message_source($id){
-	$query = "SELECT * FROM `anymail_messages` WHERE `message_id`='".$id."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT * FROM `anymail_messages` WHERE `message_id`='".db_escape($id)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	$row["attachments"] = unserialize($row["attachments"]);
 	
 	$body = '';
@@ -616,19 +609,19 @@ function get_message_source($id){
 		}
 		
 		foreach($row["attachments"] as $aid){
-			$aquery = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".$aid."'";
-			$aresult = run_query($aquery);
-			$arow = mysql_fetch_assoc($aresult);
+			$aquery = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".intval($aid)."'";
+			$aresult = db_query($aquery);
+			$arow = db_fetch_assoc($aresult);
 			
 			$body .= "\r\n\r\n--".$boundary."\n";
 			$body .= "Content-Type: ".$arow["mime_type"]."; name=\"".$arow["filename"]."\"\n";
 			$body .= "Content-Transfer-Encoding: ".$arow["encoding"]."\n";
 			$body .= "Content-Disposition: attachment; filename=\"".$arow["filename"]."\"\r\n\r\n";
 			
-			$filequery = "SELECT * FROM `anymail_attachment_data` WHERE `data_id` = '".$arow["data_id"]."' ORDER BY `part_id` ASC";
-			$fileresult = run_query($filequery);
+			$filequery = "SELECT * FROM `anymail_attachment_data` WHERE `data_id` = '".intval($arow["data_id"])."' ORDER BY `part_id` ASC";
+			$fileresult = db_query($filequery);
 			
-			while ($filerow = mysql_fetch_assoc($fileresult)){
+			while ($filerow = db_fetch_assoc($fileresult)){
 				$body .= $filerow["data"];
 			}
 		}

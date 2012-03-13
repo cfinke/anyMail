@@ -26,29 +26,29 @@ if (isset($_REQUEST["is_upload"])){
 		// Get the data out of the file.
 		$file = new attachment($i, $message);
 		
-		$dupe_query = "SELECT * FROM `anymail_attachments` WHERE `hash`='".$file->hash."'";
-		$dupe_result = mysql_query($dupe_query) or die(mysql_error() . '<br /><br />' . $dupe_query);
+		$dupe_query = "SELECT * FROM `anymail_attachments` WHERE `hash`='".db_escape($file->hash)."'";
+		$dupe_result = db_query($dupe_query);
 		
-		if (mysql_num_rows($dupe_result) > 0){
+		if (db_num_rows($dupe_result) > 0){
 			$mysql_data_id = mysql_result($dupe_result, 0, 'data_id');
 			$insert_query = "INSERT INTO `anymail_attachments` 
 						(`user_id`,`filename`,`mime_type`,`encoding`,`hash`,`data_id`) 
 						VALUES
-						('".$_SESSION["anymail"]["user"]["user_id"]."',
-						 '".mysql_escape_string($file->filename)."',
-						 '".mysql_escape_string($file->mime_type)."',
-						 '".mysql_escape_string($file->encoding)."',
-						 '".mysql_escape_string($file->hash)."',
-						 '".$mysql_data_id."')";
-			$insert_result = mysql_query($insert_query) or die(mysql_error() . '<br /><br />' . $insert_query);
+						('".intval($_SESSION["anymail"]["user"]["user_id"])."',
+						 '".db_escape($file->filename)."',
+						 '".db_escape($file->mime_type)."',
+						 '".db_escape($file->encoding)."',
+						 '".db_escape($file->hash)."',
+						 '".intval($mysql_data_id)."')";
+			$insert_result = db_query($insert_query);
 			
-			$attachments[] = mysql_insert_id();
+			$attachments[] = db_insert_id();
 		}
 		else{
 			$id_query = "SELECT MAX(`data_id`) as `new_id` FROM `anymail_attachment_data`";
-			$id_result = mysql_query($id_query) or die(mysql_error() . '<br /><br />' . $id_query);
+			$id_result = db_query($id_query);
 			
-			if (mysql_num_rows($id_result) == 0){
+			if (db_num_rows($id_result) == 0){
 				$mysql_data_id = 1;
 			}
 			else{
@@ -67,10 +67,10 @@ if (isset($_REQUEST["is_upload"])){
 					$data_insert = "INSERT INTO `anymail_attachment_data`
 								(`data_id`,`part_id`,`data`)
 								VALUES 
-								('".$mysql_data_id."',
+								('".intval($mysql_data_id)."',
 								 ".$part_id++.",
-								 '".mysql_escape_string($bodypart)."')";
-					$insert_result = mysql_query($data_insert) or die(mysql_error() . '<br /><br />' . $data_insert);
+								 '".db_escape($bodypart)."')";
+					$insert_result = db_query($data_insert);
 				}
 				
 				$bookmark += 100000;
@@ -79,15 +79,15 @@ if (isset($_REQUEST["is_upload"])){
 			$insert_query = "INSERT INTO `anymail_attachments` 
 						(`user_id`,`filename`,`mime_type`,`encoding`,`hash`,`data_id`) 
 						VALUES
-						('".$_SESSION["anymail"]["user"]["user_id"]."',
-						 '".mysql_escape_string($file->filename)."',
-						 '".mysql_escape_string($file->mime_type)."',
-						 '".mysql_escape_string($file->encoding)."',
-						 '".mysql_escape_string($file->hash)."',
-						 '".$mysql_data_id."')";
-			$insert_result = mysql_query($insert_query) or die(mysql_error() . '<br /><br />' . $insert_query);
+						('".intval($_SESSION["anymail"]["user"]["user_id"])."',
+						 '".db_escape($file->filename)."',
+						 '".db_escape($file->mime_type)."',
+						 '".db_escape($file->encoding)."',
+						 '".db_escape($file->hash)."',
+						 '".intval($mysql_data_id)."')";
+			$insert_result = db_query($insert_query);
 			
-			$attachments[] = mysql_insert_id();
+			$attachments[] = db_insert_id();
 		}
 	}
 	
@@ -112,25 +112,25 @@ if (isset($_REQUEST["is_upload"])){
 		`html_part`,
 		`sent`)
 		VALUES (
-		'".$_SESSION["anymail"]["user"]["user_id"]."',
-		'".mysql_escape_string($message->export_headers())."', 
-		'".mysql_escape_string(serialize($attachments))."', 
-		'".mysql_escape_string($message->parsed_headers["Return-Path"])."', 
-		'".mysql_escape_string($message->parsed_headers["From"])."', 
-		'".mysql_escape_string($message->parsed_headers["Reply-To"])."', 
-		'".mysql_escape_string($message->parsed_headers["To"])."', 
-		'".mysql_escape_string($message->parsed_headers["Subject"])."', 
-		'".mysql_escape_string($message->parsed_headers["Cc"])."', 
-		'".mysql_escape_string($message->parsed_headers["Message-ID"])."', 
-		'".mysql_escape_string($message->parsed_headers["In-Reply-To"])."', 
-		'".mysql_escape_string($message->parsed_headers["Date"])."', 
+		'".intval($_SESSION["anymail"]["user"]["user_id"])."',
+		'".db_escape($message->export_headers())."', 
+		'".db_escape(serialize($attachments))."', 
+		'".db_escape($message->parsed_headers["Return-Path"])."', 
+		'".db_escape($message->parsed_headers["From"])."', 
+		'".db_escape($message->parsed_headers["Reply-To"])."', 
+		'".db_escape($message->parsed_headers["To"])."', 
+		'".db_escape($message->parsed_headers["Subject"])."', 
+		'".db_escape($message->parsed_headers["Cc"])."', 
+		'".db_escape($message->parsed_headers["Message-ID"])."', 
+		'".db_escape($message->parsed_headers["In-Reply-To"])."', 
+		'".db_escape($message->parsed_headers["Date"])."', 
 		'".make_timestamp_from_date($message->parsed_headers["Date"])."', 
-		'".mysql_escape_string(serialize(array()))."', 
+		'".db_escape(serialize(array()))."', 
 		'0',
-		'".substr(mysql_escape_string($message->export_text_body()),0,40000)."',
-		'".substr(mysql_escape_string($message->export_html_body()),0,40000)."',
+		'".substr(db_escape($message->export_text_body()),0,40000)."',
+		'".substr(db_escape($message->export_html_body()),0,40000)."',
 		'".intval(isset($_REQUEST["sent"]))."')";
-	$message_result = mysql_query($message_query) or die(mysql_error() . '<br /><br />' . $message_query);
+	$message_result = db_query($message_query);
 	
 	$status_message = '<p>Your e-mail message was uploaded successfully.</p>';
 }

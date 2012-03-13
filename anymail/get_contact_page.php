@@ -17,13 +17,13 @@ $output .= '
 							<td>Contacts</td>
 						</tr>';
 
-$query = "SELECT * FROM `anymail_contact_groups` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `group_name` ASC";
-$result = run_query($query);
+$query = "SELECT * FROM `anymail_contact_groups` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `group_name` ASC";
+$result = db_query($query);
 
 $i = 0;
 
-if (mysql_num_rows($result) > 0){
-	while ($row = mysql_fetch_array($result)){
+if (db_num_rows($result) > 0){
+	while ($row = db_fetch_assoc($result)){
 		$this_contacts = array();
 		
 		$output .= '
@@ -37,9 +37,9 @@ if (mysql_num_rows($result) > 0){
 		$contact_ids = unserialize($row["contact_ids"]);
 		
 		foreach($contact_ids as $cid){
-			$newquery = "SELECT * FROM `anymail_contacts` WHERE `contact_id`='".$cid."'";
-			$newresult = run_query($newquery);
-			$newrow = mysql_fetch_assoc($newresult);
+			$newquery = "SELECT * FROM `anymail_contacts` WHERE `contact_id`='".intval($cid)."'";
+			$newresult = db_query($newquery);
+			$newrow = db_fetch_assoc($newresult);
 			
 			$this_contacts[] = $newrow["contact_name"] . ' &lt;'.$newrow["contact_email"].'&gt;';
 		}
@@ -60,13 +60,13 @@ $output .= '
 						</tr>';
 
 //var newLabelName = prompt(\'Edit '.$row["label_name"].' label:\', \''.$row["label_name"].'\'); if (newLabelName) edit_label(\''.$row["label_name"].'\', newLabelName);
-$query = "SELECT * FROM `anymail_contacts` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `contact_name` ASC";
-$result = run_query($query);
+$query = "SELECT * FROM `anymail_contacts` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `contact_name` ASC";
+$result = db_query($query);
 
 $i = 0;
 
-if (mysql_num_rows($result) > 0){
-	while ($row = mysql_fetch_array($result)){
+if (db_num_rows($result) > 0){
+	while ($row = db_fetch_assoc($result)){
 		$output .= '
 			<tr class="contact_row_'.(($i++ % 2) + 1).'">
 				<td>

@@ -2,16 +2,16 @@
 
 include("globals.php");
 
-$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".$_REQUEST["aid"]."' AND `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."'";
-$result = run_query($query);
-$info_row = mysql_fetch_assoc($result);
+$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".intval($_REQUEST["aid"])."' AND `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."'";
+$result = db_query($query);
+$info_row = db_fetch_assoc($result);
 
-$query = "SELECT * FROM `anymail_attachment_data` WHERE `data_id` = '".$info_row["data_id"]."' ORDER BY `part_id` ASC";
-$result = run_query($query);
+$query = "SELECT * FROM `anymail_attachment_data` WHERE `data_id` = '".intval($info_row["data_id"])."' ORDER BY `part_id` ASC";
+$result = db_query($query);
 
 $file_contents = '';
 
-while ($row = mysql_fetch_assoc($result)){
+while ($row = db_fetch_assoc($result)){
 	$file_contents .= $row["data"];
 }
 

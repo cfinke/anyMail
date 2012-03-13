@@ -9,9 +9,9 @@ $query = "INSERT INTO `anymail_contact_groups`
 	 `user_id`,
 	 `contact_ids`)
 	 VALUES
-	 ('".mysql_escape_string($_REQUEST["name"])."',
-	  '".$_SESSION["anymail"]["user"]["user_id"]."',
-	  '".mysql_escape_string(serialize(explode(",",$_REQUEST["contact_ids"])))."')";
-$result = run_query($query);
+	 ('".db_escape($_REQUEST["name"])."',
+	  '".intval($_SESSION["anymail"]["user"]["user_id"])."',
+	  '".db_escape(serialize(explode(",",$_REQUEST["contact_ids"])))."')";
+$result = db_query($query);
 
 ?>

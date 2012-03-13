@@ -4,8 +4,8 @@ include("globals.php");
 
 $output = '';
 
-$query = "SELECT * FROM `anymail_labels` WHERE `user_id`='".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `label_name` ASC";
-$result = run_query($query);
+$query = "SELECT * FROM `anymail_labels` WHERE `user_id`='".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `label_name` ASC";
+$result = db_query($query);
 
 $output .= '<div style="height: 80px; overflow: auto;">
 		<table cellspacing="0" cellpadding="0">
@@ -16,8 +16,8 @@ $output .= '<div style="height: 80px; overflow: auto;">
 		$output .= '<td><a href="javascript:void(0);" onclick="select_label(\'x\');filter_listing(\'x\');">[none]</a></td>';
 		$output .= '</tr>';
 
-if (mysql_num_rows($result) > 0){
-	while ($row = mysql_fetch_assoc($result)){
+if (db_num_rows($result) > 0){
+	while ($row = db_fetch_assoc($result)){
 		$output .= '<tr id="label_row_'.$row["label_id"].'" class="';
 		if ($row["label_id"] == $_SESSION["anymail"]["lid"]) $output .= 'label_row_selected';
 		else $output .= 'label_row_unselected';

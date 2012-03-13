@@ -1,11 +1,21 @@
 <?php
 
-$database_host = "";
-$database_user = "";
-$database_password = "";
-$database_name = "";
+$GLOBALS["DATABASE_SLAVES"] = array(
+	"127.0.0.1"
+);
 
-mysql_connect($database_host, $database_user, $database_password);
-mysql_select_db($database_name);
+define('DB_SLAVE_NAME', '');
+define('DB_SLAVE_USER', '');
+define('DB_SLAVE_PASSWORD', '');
+
+$GLOBALS["DATABASE_MASTERS"] = array(
+	"127.0.0.1"
+);
+
+define('DB_MASTER_NAME', '');
+define('DB_MASTER_USER', '');
+define('DB_MASTER_PASSWORD', '');
+
+include "db.php";
 
 ?>

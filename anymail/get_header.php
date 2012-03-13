@@ -3,9 +3,9 @@
 include("globals.php");
 
 if (isset($_REQUEST["id"])){
-	$query = "SELECT `Subject`,`From`,`To`,`attachments` FROM `anymail_messages` WHERE `message_id`='".$_REQUEST["id"]."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT `Subject`,`From`,`To`,`attachments` FROM `anymail_messages` WHERE `message_id`='".intval($_REQUEST["id"])."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	$row["attachments"] = unserialize($row["attachments"]);
 	
 	$output = '<table cellpadding="0" cellspacing="0"><tr>';
@@ -21,9 +21,9 @@ if (isset($_REQUEST["id"])){
 					<option value="0">Download attachments</option>';
 		
 		foreach ($row["attachments"] as $aid){
-			$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".$aid."'";
-			$result = run_query($query);
-			$newrow = mysql_Fetch_assoc($result);
+			$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".intval($aid)."'";
+			$result = db_query($query);
+			$newrow = db_fetch_assoc($result);
 			
 			$attachment_form .= '<option value="'.$aid.'">'.$newrow["filename"].'</option>';
 		}

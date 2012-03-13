@@ -3,18 +3,18 @@
 include("globals.php");
 
 if (isset($_REQUEST["id"])){
-	$query = "SELECT `labels`, UNIX_TIMESTAMP(`nice_date`) AS `unix_date` FROM `anymail_messages` WHERE `message_id`='".$_REQUEST["id"]."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT `labels`, UNIX_TIMESTAMP(`nice_date`) AS `unix_date` FROM `anymail_messages` WHERE `message_id`='".intval($_REQUEST["id"])."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$labels = unserialize($row["labels"]);
 	
-	$query = "SELECT * FROM `anymail_labels` WHERE `user_id` = '".$_SESSION["anymail"]["user"]["user_id"]."' ORDER BY `label_name`";
-	$result = run_query($query);
+	$query = "SELECT * FROM `anymail_labels` WHERE `user_id` = '".intval($_SESSION["anymail"]["user"]["user_id"])."' ORDER BY `label_name`";
+	$result = db_query($query);
 	
 	$label_options = '<option>Label this message</option>';
 	
-	while ($label_row = mysql_fetch_assoc($result)){
+	while ($label_row = db_fetch_assoc($result)){
 		$label_options .= '<option value="'.$label_row["label_id"].'" onclick="label_message('.$_REQUEST["id"].','.$label_row["label_id"].');show_header_header('.$_REQUEST["id"].');"';
 		if (in_array($label_row["label_id"],$labels)) $label_options .= ' style="background: rgb(61,128,223); color: #ffffff;"';
 		$label_options .= '>'.$label_row["label_name"].'</option>';

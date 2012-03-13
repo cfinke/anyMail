@@ -2,9 +2,9 @@
 
 include("globals.php");
 
-$query = "SELECT * FROM `anymail_messages` WHERE `message_id`='".$_REQUEST["id"]."'";
-$result = run_query($query);
-$row = mysql_fetch_array($result);
+$query = "SELECT * FROM `anymail_messages` WHERE `message_id`='".intval($_REQUEST["id"])."'";
+$result = db_query($query);
+$row = db_fetch_assoc($result);
 
 if ($row["html_part"] != ''){
 	$output = $row["html_part"];
@@ -39,7 +39,7 @@ $output .= $thread->thread_nav;
 
 echo '<span id="message_top"></span>'.$output;
 
-$query = "UPDATE `anymail_messages` SET `seen`=1 WHERE `message_id`='".$_REQUEST["id"]."'";
-$result = run_query($query);
+$query = "UPDATE `anymail_messages` SET `seen`=1 WHERE `message_id`='".intval($_REQUEST["id"])."'";
+$result = db_query($query);
 
 ?>

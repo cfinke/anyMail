@@ -58,8 +58,8 @@ function write_email_files($mids, $dir){
 
 function write_email_to_file($id, $dir){
 	$query = "SELECT `Subject`,UNIX_TIMESTAMP(`nice_date`) AS `unix_date` FROM `anymail_messages` WHERE `message_id`=".$id;
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$date = date("Y-m-d",$row["unix_date"]);
 	

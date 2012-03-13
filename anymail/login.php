@@ -23,22 +23,22 @@ if (isset($_REQUEST["manual_registration"])){
 		 `protocol`,
 		 `port`)
 		VALUES
-		('".mysql_escape_string($_REQUEST["host_name"])."',
-		 '".$_REQUEST["protocol"]."',
-		 '".$port."')";
-	$add_host_result = run_query($add_host_query);
+		('".db_escape($_REQUEST["host_name"])."',
+		 '".db_escape($_REQUEST["protocol"])."',
+		 '".intval($port)."')";
+	$add_host_result = db_query($add_host_query);
 	
-	$host_id = mysql_insert_id();
+	$host_id = db_insert_id();
 	
 	// Add the user to the users table.
 	$add_user_query = "INSERT INTO `anymail_users`
 		(`host_id`,`email_address`,`username`)
 		VALUES
-		('".$host_id."','".mysql_escape_string($_REQUEST["email_address"])."','".mysql_escape_string($_REQUEST["username"])."')";
-	$add_user_result = run_query($add_user_query);
+		('".intval($host_id)."','".db_escape($_REQUEST["email_address"])."','".db_escape($_REQUEST["username"])."')";
+	$add_user_result = db_query($add_user_query);
 	
 	// Set the username and password session variables.
-	$_SESSION["anymail"]["user"]["user_id"] = mysql_insert_id();
+	$_SESSION["anymail"]["user"]["user_id"] = db_insert_id();
 	$_SESSION["anymail"]["user"]["username"] = $_REQUEST["username"];
 	$_SESSION["anymail"]["user"]["password"] = $_REQUEST["password"];
 	
@@ -55,12 +55,12 @@ if (isset($_REQUEST["manual_registration"])){
 else{
 	if (!isset($_REQUEST["bad_host"])){
 		// Check if the user logging in is already listed in the database.
-		$query = "SELECT * FROM `anymail_users` WHERE `email_address`='".$_REQUEST["email_address"]."'";
-		$result = run_query($query);
+		$query = "SELECT * FROM `anymail_users` WHERE `email_address`='".db_escape($_REQUEST["email_address"])."'";
+		$result = db_query($query);
 		
-		if (mysql_num_rows($result) > 0){
+		if (db_num_rows($result) > 0){
 			// If so, collect the data from the database and send the user on his way.
-			$row = mysql_fetch_array($result);
+			$row = db_fetch_assoc($result);
 			
 			// Set the username and password session variables.
 			$_SESSION["anymail"]["user"]["user_id"] = $row["user_id"];
@@ -70,8 +70,8 @@ else{
 			
 			// Get the host information for this user.
 			$query = "SELECT * FROM `anymail_hosts` WHERE `host_id` = ".$row["host_id"];
-			$result = run_query($query);
-			$newrow = mysql_fetch_array($result);
+			$result = db_query($query);
+			$newrow = db_fetch_assoc($result);
 			
 			// Set the host information.
 			$_SESSION["anymail"]["host"]["domain"] = $newrow["domain"];
@@ -96,22 +96,22 @@ else{
 				 `protocol`,
 				 `port`)
 				VALUES
-				('".mysql_escape_string($host_information["host"])."',
-				 '".mysql_escape_string($host_information["protocol"])."',
-				 '".mysql_escape_string($host_information["port"])."')";
-			$add_host_result = run_query($add_host_query);
+				('".db_escape($host_information["host"])."',
+				 '".db_escape($host_information["protocol"])."',
+				 '".db_escape($host_information["port"])."')";
+			$add_host_result = db_query($add_host_query);
 			
-			$host_id = mysql_insert_id();
+			$host_id = db_insert_id();
 			
 			// Add the user to the users table.
 			$add_user_query = "INSERT INTO `anymail_users`
 				(`host_id`,`email_address`,`username`)
 				VALUES
-				('".$host_id."','".mysql_escape_string($_REQUEST["email_address"])."','".mysql_escape_string($host_information["username"])."')";
-			$add_user_result = run_query($add_user_query);
+				('".intval($host_id)."','".db_escape($_REQUEST["email_address"])."','".db_escape($host_information["username"])."')";
+			$add_user_result = db_query($add_user_query);
 			
 			// Set the username and password session variables.
-			$_SESSION["anymail"]["user"]["user_id"] = mysql_insert_id();
+			$_SESSION["anymail"]["user"]["user_id"] = db_insert_id();
 			$_SESSION["anymail"]["user"]["username"] = $host_information["username"];
 			$_SESSION["anymail"]["user"]["password"] = $_REQUEST["password"];
 			

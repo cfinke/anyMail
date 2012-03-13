@@ -55,9 +55,9 @@ else{
 		case 'reply':
 			$to = get_senders($_REQUEST["mid"]);
 			
-			$query = "SELECT `Message-ID` FROM `anymail_messages` WHERE `message_id`='".$_REQUEST["mid"]."'";
-			$result = run_query($query);
-			$row = mysql_fetch_Array($result);
+			$query = "SELECT `Message-ID` FROM `anymail_messages` WHERE `message_id`='".intval($_REQUEST["mid"])."'";
+			$result = db_query($query);
+			$row = db_fetch_assoc($result);
 			$inreplyto = $row["Message-ID"];
 			
 		case 'forward':
@@ -150,13 +150,13 @@ echo $output;
 
 
 function get_senders($mid){
-	$query = "SELECT `From` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `From` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$senders = '';
 	
-	if ((mysql_num_rows($result) > 0) && ($row["From"] != "")){
+	if ((db_num_rows($result) > 0) && ($row["From"] != "")){
 		$senders .= $row["From"] . ', ';
 	}
 	
@@ -165,13 +165,13 @@ function get_senders($mid){
 }
 
 function get_receivers($mid){
-	$query = "SELECT `To` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `To` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$receivers = '';
 	
-	if ((mysql_num_rows($result) > 0) && ($row["To"] != "")){
+	if ((db_num_rows($result) > 0) && ($row["To"] != "")){
 		$receivers .= $row["To"] . ', ';
 	}
 	
@@ -180,13 +180,13 @@ function get_receivers($mid){
 }
 
 function get_ccd($mid){
-	$query = "SELECT `Cc` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `Cc` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	$ccd = '';
 	
-	if ((mysql_num_rows($result) > 0) && ($row["Cc"] != "")){
+	if ((db_num_rows($result) > 0) && ($row["Cc"] != "")){
 		$ccd .= $row["Cc"] . ', ';
 	}
 	
@@ -195,23 +195,23 @@ function get_ccd($mid){
 }
 
 function get_sent_date($mid){
-	$query = "SELECT `Date` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `Date` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	return $row["Date"];
 }
 
 function get_subject($mid, $prefix = ''){
-	$query = "SELECT `Subject` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `Subject` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	return $prefix . $row["Subject"];
 }
 
 function get_forwarded_attachments($mid){
-	$query = "SELECT `attachments` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT `attachments` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	$attachments = unserialize($row["attachments"]);
 	
     foreach($attachments as $attachment){
@@ -235,18 +235,18 @@ function make_tmp_file($aid){
 	
 	$handle = fopen($filename, "w");
 	
-	$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".$aid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_assoc($result);
+	$query = "SELECT * FROM `anymail_attachments` WHERE `attachment_id`='".intval($aid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
-	$query = "SELECT `data` FROM `anymail_attachment_data` WHERE `data_id`='".$row["data_id"]."' ORDER BY `part_id` ASC";
-	$result = run_query($query);
+	$query = "SELECT `data` FROM `anymail_attachment_data` WHERE `data_id`='".intval($row["data_id"])."' ORDER BY `part_id` ASC";
+	$result = db_query($query);
 	
 	$file_contents = '';
 	
 	$file_data = array("filename"=>$filename,"file_info"=>$row);
 	
-	while ($newrow = mysql_fetch_assoc($result)){
+	while ($newrow = db_fetch_assoc($result)){
 		if ($row["encoding"] == "base64"){
 			$newrow["data"] = base64_decode($newrow["data"]);
 		}
@@ -263,9 +263,9 @@ function make_tmp_file($aid){
 }
 
 function get_reply_message($mid){
-	$query = "SELECT `text_part`,`html_part` FROM `anymail_messages` WHERE `message_id`='".$mid."'";
-	$result = run_query($query);
-	$row = mysql_fetch_array($result);
+	$query = "SELECT `text_part`,`html_part` FROM `anymail_messages` WHERE `message_id`='".intval($mid)."'";
+	$result = db_query($query);
+	$row = db_fetch_assoc($result);
 	
 	if (trim($row["text_part"]) != ''){
 		$text = "> " . str_replace("\n", "\n> ", wordwrap(trim($row["text_part"]), 70));
