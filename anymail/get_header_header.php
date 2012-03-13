@@ -15,7 +15,7 @@ if (isset($_REQUEST["id"])){
 	$label_options = '<option>Label this message</option>';
 	
 	while ($label_row = db_fetch_assoc($result)){
-		$label_options .= '<option value="'.$label_row["label_id"].'" onclick="label_message('.$_REQUEST["id"].','.$label_row["label_id"].');show_header_header('.$_REQUEST["id"].');"';
+		$label_options .= '<option value="'.htmlspecialchars($label_row["label_id"]).'" onclick="label_message('.$_REQUEST["id"].','.$label_row["label_id"].');show_header_header('.$_REQUEST["id"].');"';
 		if (in_array($label_row["label_id"],$labels)) $label_options .= ' style="background: rgb(61,128,223); color: #ffffff;"';
 		$label_options .= '>'.$label_row["label_name"].'</option>';
 	}

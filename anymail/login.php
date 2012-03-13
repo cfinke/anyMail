@@ -139,15 +139,15 @@ else{
 			<body>
 				<center>
 					<div id="login" style="border: thin black solid; background-color: #ffffff; width: 40%; margin-left: auto; margin-right: auto; margin-top: 50px; padding: 10px; text-align: left;">
-						<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+						<form action="" method="post">';
 
 	if (isset($_REQUEST["bad_host"])){
 		$output .= '<p>anyMail could not connect to the host with the information you provided. Please fill in the form below to continue.</p>';
 	}
 	else{
 		$output .= '<p>anyMail could not determine your mail host or username.  Please fill in the form below to continue.</p>
-			<input type="hidden" name="email_address" value="'.$_REQUEST["email_address"].'" />
-			<input type="hidden" name="password" value="'.$_REQUEST["password"].'" />';
+			<input type="hidden" name="email_address" value="'.htmlspecialchars($_REQUEST["email_address"]).'" />
+			<input type="hidden" name="password" value="'.htmlspecialchars($_REQUEST["password"]).'" />';
 	}
 	
 	$output .= '

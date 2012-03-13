@@ -321,11 +321,11 @@ class thread_arc {
 					
 					if ($this->orientation == "h"){
 						// Horizontal map
-						$this->map .= '<area shape="rect" coords="'.round($this->circle_width * 1.6 * $i).',0,'.round($this->circle_width * 1.6 * ($i + 1)).','.$this->image_height.'" href="javascript:void(0);" onclick="alert();" alt="'.$this->get_subject($this_key, $this->thread->thread).'" />'."\n";
+						$this->map .= '<area shape="rect" coords="'.round($this->circle_width * 1.6 * $i).',0,'.round($this->circle_width * 1.6 * ($i + 1)).','.$this->image_height.'" href="javascript:void(0);" onclick="alert();" alt="'.htmlspecialchars($this->get_subject($this_key, $this->thread->thread)).'" />'."\n";
 					}
 					else{
 						// Vertical map
-						$this->map .= '<area shape="rect" coords="0,'.round($this->circle_width * 1.6 * $i).',175,'.round($this->circle_width * 1.6 * ($i + 1)).'" href="javascript:void(0);" onclick="alert();" alt="'.$this->get_subject($this_key, $this->thread->thread).'" />'."\n";
+						$this->map .= '<area shape="rect" coords="0,'.round($this->circle_width * 1.6 * $i).',175,'.round($this->circle_width * 1.6 * ($i + 1)).'" href="javascript:void(0);" onclick="alert();" alt="'.htmlspecialchars($this->get_subject($this_key, $this->thread->thread)).'" />'."\n";
 					}
 				}
 			}

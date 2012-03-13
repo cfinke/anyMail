@@ -25,7 +25,7 @@ if (isset($_REQUEST["id"])){
 			$result = db_query($query);
 			$newrow = db_fetch_assoc($result);
 			
-			$attachment_form .= '<option value="'.$aid.'">'.$newrow["filename"].'</option>';
+			$attachment_form .= '<option value="'.htmlspecialchars($aid).'">'.$newrow["filename"].'</option>';
 		}
 		
 		$attachment_form .= '</select></td>';

@@ -210,7 +210,7 @@ if (db_num_rows($result) > 0){
 			$old_rows .= '
 				<tr id="message_row_'.$row["message_id"].'" class="row_unselected" style="display: auto;">
 					<td>
-						<input type="checkbox" id="input_row['.$row["message_id"].']" name="input_row" value="'.$row["message_id"].'" style="width: 10px; height: 10px;" />
+						<input type="checkbox" id="input_row['.$row["message_id"].']" name="input_row" value="'.htmlspecialchars($row["message_id"]).'" style="width: 10px; height: 10px;" />
 					</td>
 					<td>
 						<abbr title="'.date("l F j, Y g:i a",$row["unix_time"]).'">'.date("g:i a",$row["unix_time"]).'</abbr>
@@ -279,7 +279,7 @@ if (db_num_rows($result) > 0){
 			$old_rows .= '
 				<tr id="message_row_'.$row["message_id"].'" class="row_unselected" style="display: auto;">
 					<td>
-						<input type="checkbox" id="input_row['.$row["message_id"].']" name="input_row" value="'.$row["message_id"].'" style="width: 10px; height: 10px;" />
+						<input type="checkbox" id="input_row['.$row["message_id"].']" name="input_row" value="'.htmlspecialchars($row["message_id"]).'" style="width: 10px; height: 10px;" />
 					</td>
 					<td>
 						<abbr title="'.date("l F j, Y g:i a",$row["unix_time"]).'">'.date("g:i a",$row["unix_time"]).'</abbr>

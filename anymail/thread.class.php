@@ -159,7 +159,7 @@ class email_thread {
 			$message["to"] .= '</abbr>';
 			
 			if (strlen($message["subject"]) > $subject_length){
-				$message["subject"] = '<abbr title="'.$message["subject"].'">'.substr($message["subject"],0,$subject_length - 2).'...</abbr>';
+				$message["subject"] = '<abbr title="'.htmlspecialchars($message["subject"]).'">'.substr($message["subject"],0,$subject_length - 2).'...</abbr>';
 			}
 			
 			$class = ($message["seen"]) ? 'seen' : 'unseen';
@@ -171,7 +171,7 @@ class email_thread {
 			$time .= ':' . substr($message["nice_date"],10,2) . ' ' . $meridian;
 			
 			$output .= '
-				<tr class="'.$row_class.'">
+				<tr class="'.htmlspecialchars($row_class).'">
 					<td class="date"><abbr title="'.date("l F j, Y",$message["unix_time"]).' '.$time.'">'.$time.'</abbr></td>
 					<td class="from">'.$message["from"].'&nbsp;</td>
 					<td class="attachment">'.$message["attachment"].'</td>
@@ -180,7 +180,7 @@ class email_thread {
 						$output .= $prefix . '*';
 					}
 					
-					$output .='<a href="javascript:void(0);" onclick="show_message('.$message["message_id"].');" class="'.$class.'">'.$message["subject"].'</a></td>
+					$output .='<a href="javascript:void(0);" onclick="show_message('.$message["message_id"].');" class="'.htmlspecialchars($class).'">'.$message["subject"].'</a></td>
 					<td class="to">'.$message["to"].'</td>
 				</tr>';
 			

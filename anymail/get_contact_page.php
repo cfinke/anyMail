@@ -72,7 +72,7 @@ if (db_num_rows($result) > 0){
 				<td>
 					<a href="javascript:void(0);" onclick="edit_contact(\''.str_replace("'","\'",$row["contact_name"]).'\', \''.$row["contact_email"].'\', '.$row["contact_id"].');"><img src="images/edit.gif" title="Edit" /></a>
 					<a href="javascript:void(0);" onclick="delete_contact(\''.str_replace("'","\'",$row["contact_name"]).'\', '.$row["contact_id"].');"><img src="images/x.gif" title="Delete" /></a>
-					<input type="checkbox" name="addToGroup" value="'.$row["contact_id"].'" />
+					<input type="checkbox" name="addToGroup" value="'.htmlspecialchars($row["contact_id"]).'" />
 				</td>
 				<td>'.$row["contact_name"].'</td>
 				<td>'.$row["contact_email"].'</td>';

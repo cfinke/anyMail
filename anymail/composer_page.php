@@ -90,10 +90,10 @@ $output .= '
 			</style>
 		</head>
 		<body>
-			<form action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
+			<form action="" method="post" enctype="multipart/form-data">';
 
 if (isset($inreplyto)){
-	$output .= '<input type="hidden" name="in_reply_to" value="'.$inreplyto.'"" />';
+	$output .= '<input type="hidden" name="in_reply_to" value="'.htmlspecialchars($inreplyto).'" />';
 }
 
 $output .= '
@@ -101,19 +101,19 @@ $output .= '
 	<table cellpadding="0" cellspacing="0" style="background: #ffffff;">
 		<tr>
 			<td>To:</td>
-			<td><input type="text" name="to" id="to" value="'.((isset($to)) ? htmlspecialchars($to) : '').'" style="width: 95%;" /></td>
+			<td><input type="text" name="to" id="to" value="'.(isset($to) ? htmlspecialchars($to) : '').'" style="width: 95%;" /></td>
 		</tr>
 		<tr>
 			<td>Cc:</td>
-			<td><input type="text" name="cc" id="cc" value="'.((isset($cc)) ? htmlspecialchars($cc) : '').'" style="width: 95%;" /></td>
+			<td><input type="text" name="cc" id="cc" value="'.(isset($cc) ? htmlspecialchars($cc) : '').'" style="width: 95%;" /></td>
 		</tr>
 		<tr>
 			<td>Bcc:</td>
-			<td><input type="text" name="bcc" id="bcc" value="'.((isset($bcc)) ? htmlspecialchars($bcc) : '').'" style="width: 95%;" /></td>
+			<td><input type="text" name="bcc" id="bcc" value="'.(isset($bcc) ? htmlspecialchars($bcc) : '').'" style="width: 95%;" /></td>
 		</tr>
 		<tr>
 			<td>Subject:</td>
-			<td><input type="text" name="subject" id="subject" value="'.((isset($subject)) ? htmlspecialchars($subject) : '').'" style="width: 95%;" /></td>
+			<td><input type="text" name="subject" id="subject" value="'.(isset($subject) ? htmlspecialchars($subject) : '').'" style="width: 95%;" /></td>
 		</tr>
 		<tr>
 			<td style="vertical-align: top;">Attachments:</td>

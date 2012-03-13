@@ -541,7 +541,7 @@ function get_header_row(){
 	$result = db_query($query);
 	
 	while ($label_row = db_fetch_assoc($result)){
-		$output .= '<option value="'.$label_row["label_id"].'" onclick="label_messages(getSelectedCheckboxValue(document.forms[0].input_row),'.$label_row["label_id"].', \''.str_replace("'","\'",$label_row["label_name"]).'\');">'.$label_row["label_name"].'</option>';
+		$output .= '<option value="'.htmlspecialchars($label_row["label_id"]).'" onclick="label_messages(getSelectedCheckboxValue(document.forms[0].input_row),'.$label_row["label_id"].', \''.str_replace("'","\'",$label_row["label_name"]).'\');">'.$label_row["label_name"].'</option>';
 	}
 
 $output .= '

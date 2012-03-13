@@ -129,12 +129,12 @@ class email_message {
 				
 				if ($part->isfile){
 					if ($part->filename != ''){
-						$output .= ' name="'.$part->filename.'"'."\n";
+						$output .= ' name="'.htmlspecialchars($part->filename).'"'."\n";
 					}
 				}
 				else{
 					if ($part->charset != ''){
-						$output .= ' charset="'.$part->charset.'"'."\n";
+						$output .= ' charset="'.htmlspecialchars($part->charset).'"'."\n";
 					}
 					else{
 						$output .= "\n";
@@ -150,7 +150,7 @@ class email_message {
 					
 					if ($part->isfile){
 						if ($part->filename != ''){
-							$output .= ' filename="'.$part->filename.'"'."\n";
+							$output .= ' filename="'.htmlspecialchars($part->filename).'"'."\n";
 						}
 					}
 					else{
@@ -160,7 +160,7 @@ class email_message {
 				else{
 					if ($part->isfile){
 						if ($part->filename != ''){
-							$output .= 'Content-Disposition: attachment; filename="'.$part->filename.'"'."\n";
+							$output .= 'Content-Disposition: attachment; filename="'.htmlspecialchars($part->filename).'"'."\n";
 						}
 					}
 				}

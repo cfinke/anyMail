@@ -155,7 +155,7 @@ $output = '
 		</head>
 		<body>
 		'.$status_message.'
-	<form action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">
+	<form action="" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="is_upload" value="1" />
 		<p>Using the form below, you can upload an e-mail message into your account.</p>
 		<input type="file" name="mupload" /> <input type="checkbox" name="sent" value="1" /> I sent this message.<br />
