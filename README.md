@@ -1,7 +1,5 @@
 anyMail was an IMAP Web e-mail client I wrote during an independent study course in college. I'm publishing the code for posterity; you really shouldn't use it.  Bits and pieces of it might prove useful as general examples, but I haven't looked at this code in almost a decade, and it is most certainly inefficient and insecure.
 
-If you were to try and use it, you would need the IMAP extensions installed for PHP.
-
 Logging In
 ==========
 
